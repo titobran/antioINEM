@@ -1,0 +1,417 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIESTA DE LA ANTIOQUEÑIDAD INEM 2025 - Antioquia</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇨🇴</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    .text-ant-green { color: #009A4D; }
+    .bg-ant-green { background-color: #009A4D; }
+    .hover\:text-ant-green:hover { color: #009A4D; }
+    body {
+      background-image: url('cafetal antioqueño.jpg');
+      background-attachment: fixed;
+      background-size: cover;
+    }
+    .hero-bg {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('pueblito paisa.avif');
+      background-size: cover;
+      background-position: center;
+    }
+    .font-lobster {
+      font-family: 'Lobster', cursive;
+    }
+    .text-col-yellow {
+        color: #FFCD00;
+        text-shadow: 0px 0px 8px rgba(0, 56, 147, 0.9); /* Blue highlight for yellow text */
+    }
+    .text-col-blue {
+        color: #003893;
+        text-shadow: 0px 0px 8px rgba(206, 17, 38, 0.9); /* Red highlight for blue text */
+    }
+    .text-col-red {
+        color: #CE1126;
+        text-shadow: 0px 0px 8px rgba(255, 205, 0, 0.9); /* Yellow highlight for red text */
+    }
+    .bg-col-yellow { background-color: #FFCD00; }
+    .bg-col-blue { background-color: #003893; }
+    .bg-col-red { background-color: #CE1126; }
+    .hover\:bg-col-yellow-dark:hover { background-color: #e6b800; }
+    .bg-white-transparent {
+        background-color: rgba(255, 255, 255, 0.85);
+    }
+    /* Add text-shadow for white text in header */
+    header .text-white {
+        text-shadow: 0px 0px 8px rgba(0, 56, 147, 0.9); /* Blue highlight for white text */
+    }
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 100; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+    }
+    .modal-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+    }
+    #caption {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+        text-align: center;
+        color: #ccc;
+        padding: 10px 0;
+        height: 150px;
+    }
+    .modal-content, #caption {
+        animation-name: zoom;
+        animation-duration: 0.6s;
+    }
+    @keyframes zoom {
+        from {transform:scale(0)}
+        to {transform:scale(1)}
+    }
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .close:hover,
+    .close:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .galeria-item {
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .galeria-item:hover {
+        opacity: 0.7;
+    }
+  </style>
+</head>
+<body class="font-sans text-gray-800">
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="img01">
+    <div id="caption"></div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-md">
+    <div class="container mx-auto px-4">
+      <div class="flex justify-between items-center py-2">
+        <a href="#" class="font-lobster text-2xl text-col-blue">Antioquia</a>
+        <div class="hidden md:flex space-x-6">
+          <a href="#introduccion" class="text-gray-700 hover:text-col-red transition">Introducción</a>
+          <a href="#ubicacion" class="text-gray-700 hover:text-col-red transition">Ubicación</a>
+          <a href="#platos" class="text-gray-700 hover:text-col-red transition">Platos</a>
+          <a href="#personajes" class="text-gray-700 hover:text-col-red transition">Personajes</a>
+          <a href="#turismo" class="text-gray-700 hover:text-col-red transition">Turismo</a>
+          <a href="#diccionario" class="text-gray-700 hover:text-col-red transition">Diccionario</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header id="inicio" class="hero-bg h-96 flex items-center justify-center text-white">
+    <div class="text-center" data-aos="zoom-in">
+      <h1 class="text-6xl md:text-7xl font-lobster text-col-yellow drop-shadow-lg">FIESTA DE LA ANTIOQUEÑIDAD INEM 2025</h1>
+      <h2 class="text-4xl md:text-5xl mt-4 font-lobster text-white">Antioquia: Un Mosaico de Tradición y Futuro</h2>
+      <a href="#introduccion" class="mt-8 inline-block bg-col-yellow text-col-blue py-3 px-10 rounded-full font-bold text-lg hover:bg-col-yellow-dark transition-transform transform hover:scale-105">Explora Ahora</a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-16">
+    <!-- Introduction -->
+    <section id="introduccion" class="mb-20 text-center p-8 rounded-xl shadow-lg bg-white-transparent" data-aos="fade-up">
+      <h3 class="text-5xl font-lobster text-col-blue mb-6">Bienvenidos a Antioquia</h3>
+      <p class="text-xl text-gray-700 max-w-3xl mx-auto">
+        En el marco de la <strong class="text-col-red">FIESTA DE LA ANTIOQUEÑIDAD INEM 2025</strong>, descubre Antioquia, un departamento vibrante donde la tradición paisa brilla con fuerza. ¡Sumérgete en su cultura, gastronomía y paisajes!
+      </p>
+    </section>
+
+    <!-- Explore Section -->
+    <section id="explora" class="mb-20 p-8 rounded-xl shadow-lg bg-white-transparent" data-aos="fade-up">
+      <h3 class="text-5xl font-lobster text-col-blue mb-10 text-center">Explora Nuestra Tierra</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Card Gastronomía -->
+        <div data-aos="fade-up" data-aos-delay="100" class="bg-white p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-transform flex flex-col">
+          <img src="bandeja-paisa-1616-1.gif" alt="Gastronomía Antioqueña" class="w-full h-48 object-cover rounded-lg mb-4 galeria-item" data-description="La bandeja paisa es el plato insignia de la región, una generosa combinación de sabores que incluye frijoles, arroz, chicharrón, carne en polvo, chorizo, huevo frito, plátano maduro, arepa y aguacate. ¡Una experiencia culinaria que no te puedes perder!">
+          <h4 class="text-2xl font-bold text-col-red mb-2">Gastronomía</h4>
+          <p class="text-gray-700 flex-grow">Deléitate con los sabores únicos de la cocina paisa, desde la famosa Bandeja Paisa hasta el tradicional sancocho.</p>
+          <a href="#platos" class="mt-4 inline-block bg-col-blue text-white py-2 px-6 rounded-full font-bold text-sm hover:bg-blue-800 transition-transform transform hover:scale-105 self-start">Saber Más</a>
+        </div>
+        <!-- Card Cultura -->
+        <div data-aos="fade-up" data-aos-delay="200" class="bg-white p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-transform flex flex-col">
+          <img src="fernando botero.jfif" alt="Cultura Antioqueña" class="w-full h-48 object-cover rounded-lg mb-4 galeria-item" data-description="Antioquia es un semillero de talentos. Fernando Botero, con su estilo único de figuras voluminosas, ha llevado el arte colombiano a todos los rincones del mundo. Sus obras se pueden admirar en plazas y museos, especialmente en su natal Medellín.">
+          <h4 class="text-2xl font-bold text-col-red mb-2">Cultura y Arte</h4>
+          <p class="text-gray-700 flex-grow">Sumérgete en la riqueza cultural de Antioquia, cuna de artistas como Fernando Botero y de tradiciones que perduran.</p>
+          <a href="#personajes" class="mt-4 inline-block bg-col-blue text-white py-2 px-6 rounded-full font-bold text-sm hover:bg-blue-800 transition-transform transform hover:scale-105 self-start">Saber Más</a>
+        </div>
+        <!-- Card Turismo -->
+        <div data-aos="fade-up" data-aos-delay="300" class="bg-white p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-transform flex flex-col">
+          <img src="guatape.jfif" alt="Turismo en Antioquia" class="w-full h-48 object-cover rounded-lg mb-4 galeria-item" data-description="Los paisajes de Antioquia son de una belleza imponente. Desde la vibrante y colorida Guatapé, con su famosa Piedra del Peñol, hasta los cafetales de Jardín, cada rincón ofrece una postal inolvidable y una aventura por descubrir.">
+          <h4 class="text-2xl font-bold text-col-red mb-2">Pueblos y Paisajes</h4>
+          <p class="text-gray-700 flex-grow">Recorre los pueblos más pintorescos como Guatapé y Jardín, y admira los imponentes paisajes de nuestras montañas.</p>
+          <a href="#turismo" class="mt-4 inline-block bg-col-blue text-white py-2 px-6 rounded-full font-bold text-sm hover:bg-blue-800 transition-transform transform hover:scale-105 self-start">Saber Más</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Location -->
+    <section id="ubicacion" class="mb-20 text-center p-8 rounded-xl shadow-lg bg-white-transparent" data-aos="fade-up">
+      <h3 class="text-5xl font-lobster text-col-blue mb-6">Un Territorio de Contrastes</h3>
+      <p class="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
+        Desde las montañas hasta los valles, Antioquia es un departamento lleno de diversidad. Explora su vasta geografía y descubre nuestros pueblos más emblemáticos.
+      </p>
+      <div class="w-full overflow-hidden rounded-lg shadow-md mb-8" data-aos="zoom-in-up">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2024337.034403301!2d-76.8327734241129!3d6.548501928033392!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e4428dfb80fad09%3A0x4213949f323559c4!2sAntioquia!5e0!3m2!1ses!2sco!4v1695842810833!5m2!1ses!2sco" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+      <div class="flex justify-center space-x-4" data-aos="fade-up">
+        <a href="https://www.google.com/maps/place/Guatapé,+Antioquia" target="_blank" class="inline-block bg-col-blue text-white py-3 px-8 rounded-full font-bold text-lg hover:bg-blue-800 transition-transform transform hover:scale-105">Ver Guatapé</a>
+        <a href="https://www.google.com/maps/place/Jardín,+Antioquia" target="_blank" class="inline-block bg-col-blue text-white py-3 px-8 rounded-full font-bold text-lg hover:bg-blue-800 transition-transform transform hover:scale-105">Ver Jardín</a>
+        <a href="https://www.google.com/maps/place/Santa+Fe+de+Antioquia,+Antioquia" target="_blank" class="inline-block bg-col-blue text-white py-3 px-8 rounded-full font-bold text-lg hover:bg-blue-800 transition-transform transform hover:scale-105">Ver Santa Fe</a>
+      </div>
+    </section>
+
+    <!-- Typical Dishes -->
+    <section id="platos" class="mb-20 p-8 rounded-xl shadow-lg bg-white-transparent" data-aos="fade-up">
+      <h3 class="text-5xl font-lobster text-col-blue mb-10 text-center">Platos Típicos</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div data-aos="fade-up" data-aos-delay="100" class="bg-white p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-transform">
+          <img src="bandeja-paisa-1616-1.gif" alt="Bandeja Paisa tradicional" class="w-full h-56 object-cover rounded-lg mb-4 galeria-item" data-description="La bandeja paisa es el plato insignia de la región, una generosa combinación de sabores que incluye frijoles, arroz, chicharrón, carne en polvo, chorizo, huevo frito, plátano maduro, arepa y aguacate. ¡Una experiencia culinaria que no te puedes perder!">
+          <h4 class="text-2xl font-bold text-col-red">Bandeja Paisa</h4>
+          <p class="text-gray-700 mt-2">Frijoles, arroz, carne molida, chicharrón, huevo, plátano, aguacate y arepa.</p>
+        </div>
+        <div data-aos="fade-up" data-aos-delay="200" class="bg-white p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-transform">
+          <img src="sancocho antioqueño.jfif" alt="Sancocho Antioqueño" class="w-full h-56 object-cover rounded-lg mb-4 galeria-item" data-description="El sancocho antioqueño es una sopa robusta y llena de sabor, perfecta para un almuerzo familiar. Se prepara tradicionalmente con carne de res, yuca, papa, plátano verde y mazorca, y se sirve con arroz, aguacate y un toque de ají.">
+          <h4 class="text-2xl font-bold text-col-red">Sancocho Antioqueño</h4>
+          <p class="text-gray-700 mt-2">Sopa contundente con carne, yuca, plátano y mazorca.</p>
+        </div>
+        <div data-aos="fade-up" data-aos-delay="300" class="bg-white p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-transform">
+          <img src="dulce de guayaba.jfif" alt="Dulce de guayaba" class="w-full h-56 object-cover rounded-lg mb-4 galeria-item" data-description="El 'bocadillo' o dulce de guayaba es un postre icónico. Esta pasta dulce, hecha de pulpa de guayaba y panela, a menudo se envuelve en hojas de bijao, lo que le da un sabor característico. Se suele disfrutar acompañado de un trozo de queso.">
+          <h4 class="text-2xl font-bold text-col-red">Dulce de Guayaba</h4>
+          <p class="text-gray-700 mt-2">Un postre típico para endulzar el paladar.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Historical Figures -->
+    <section id="personajes" class="mb-20 p-8 rounded-xl shadow-lg bg-white-transparent" data-aos="fade-up">
+        <h3 class="text-5xl font-lobster text-col-blue mb-10 text-center">Personajes que Dejan Huella</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="text-center" data-aos="fade-right">
+                <img src="maria corboda.jpg" alt="José María Córdova" class="w-64 h-64 object-cover rounded-full mx-auto mb-4 shadow-lg galeria-item" data-description="Conocido como el 'Héroe de Ayacucho', José María Córdova fue un general antioqueño decisivo en las guerras de independencia de Colombia y Perú. Su valentía y liderazgo son un símbolo del espíritu indomable de la región.">
+                <h4 class="text-2xl font-bold text-col-red">José María Córdova</h4>
+                <p class="text-gray-700 mt-2">Héroe de la independencia, fundamental en la historia de la región.</p>
+            </div>
+            <div class="text-center" data-aos="fade-left">
+                <img src="fernando botero.jfif" alt="Fernando Botero" class="w-64 h-64 object-cover rounded-full mx-auto mb-4 shadow-lg galeria-item" data-description="Antioquia es un semillero de talentos. Fernando Botero, con su estilo único de figuras voluminosas, ha llevado el arte colombiano a todos los rincones del mundo. Sus obras se pueden admirar en plazas y museos, especialmente en su natal Medellín.">
+                <h4 class="text-2xl font-bold text-col-red">Fernando Botero</h4>
+                <p class="text-gray-700 mt-2">Artista y escultor de fama mundial, creador del "Boterismo".</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tourism -->
+    <section id="turismo" class="mb-20 p-8 rounded-xl shadow-lg bg-white-transparent" data-aos="fade-up">
+        <h3 class="text-5xl font-lobster text-col-blue mb-10 text-center">Turismo y Aventura</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div data-aos="fade-up" data-aos-delay="100" class="bg-white p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-transform">
+                <img src="guatape.jfif" alt="El Peñol de Guatapé" class="w-full h-56 object-cover rounded-lg mb-4 galeria-item" data-description="Subir los 740 escalones de la Piedra del Peñol ofrece una de las vistas más espectaculares de Colombia. Abajo, el pueblo de Guatapé te espera con sus calles coloridas, decoradas con zócalos que cuentan historias de la comunidad.">
+                <h4 class="text-2xl font-bold text-col-red">Guatapé y El Peñol</h4>
+                <p class="text-gray-700 mt-2">Sube la imponente piedra y recorre el pueblo de los zócalos.</p>
+            </div>
+            <div data-aos="fade-up" data-aos-delay="200" class="bg-white p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-transform">
+                <img src="jardin.jfif" alt="Plaza de Jardín, Antioquia" class="w-full h-56 object-cover rounded-lg mb-4 galeria-item" data-description="Jardín es considerado por muchos como el pueblo más bonito de Antioquia. Su plaza principal, declarada Monumento Nacional, está rodeada de casas coloridas y es el lugar perfecto para disfrutar de un tinto mientras se admira la imponente basílica.">
+                <h4 class="text-2xl font-bold text-col-red">Jardín</h4>
+                <p class="text-gray-700 mt-2">Uno de los pueblos más bonitos de Colombia, rodeado de cafetales.</p>
+            </div>
+            <div data-aos="fade-up" data-aos-delay="300" class="bg-white p-6 rounded-lg shadow-lg transform hover:-translate-y-2 transition-transform">
+                <img src="santa fe de antioquia.jfif" alt="Puente de Occidente en Santa Fe de Antioquia" class="w-full h-56 object-cover rounded-lg mb-4 galeria-item" data-description="Viaja en el tiempo visitando Santa Fe de Antioquia, la antigua capital del departamento. Sus calles empedradas y su arquitectura colonial están perfectamente conservadas. No dejes de visitar el majestuoso Puente de Occidente, una joya de la ingeniería del siglo XIX.">
+                <h4 class="text-2xl font-bold text-col-red">Santa Fe de Antioquia</h4>
+                <p class="text-gray-700 mt-2">La "Cuna de la Antioqueñidad", con su arquitectura colonial y el Puente de Occidente.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Paisa Dictionary -->
+    <section id="diccionario" class="mb-20 p-8 rounded-xl shadow-lg bg-white-transparent" data-aos="fade-up">
+      <h3 class="text-5xl font-lobster text-col-blue mb-10 text-center">Diccionario Paisa</h3>
+      <div class="flex flex-col md:flex-row gap-8">
+        <div class="md:w-1/3">
+          <div id="word-list" class="flex flex-col space-y-2">
+            <button class="word-btn bg-col-yellow text-col-blue p-3 rounded-lg font-bold transition">Parce</button>
+            <button class="word-btn bg-white p-3 rounded-lg font-bold transition">Mor</button>
+            <button class="word-btn bg-white p-3 rounded-lg font-bold transition">Charro</button>
+            <button class="word-btn bg-white p-3 rounded-lg font-bold transition">Camellar</button>
+            <button class="word-btn bg-white p-3 rounded-lg font-bold transition">Chimba</button>
+            <button class="word-btn bg-white p-3 rounded-lg font-bold transition">Pues</button>
+          </div>
+        </div>
+        <div class="md:w-2/3">
+          <div id="definition-box" class="bg-white p-6 rounded-lg shadow-inner min-h-[150px]">
+            <p id="definition-text" class="text-gray-700 text-lg"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sabias Que -->
+    <section id="sabias-que" class="mb-20 p-8 rounded-xl shadow-lg bg-white-transparent" data-aos="fade-up">
+      <h3 class="text-5xl font-lobster text-col-blue mb-10 text-center">¿Sabías que...?</h3>
+      <div class="space-y-6 max-w-4xl mx-auto">
+        <div class="bg-white p-5 rounded-lg shadow-md" data-aos="fade-left">
+          <p class="text-lg text-gray-800"><strong class="text-col-red">El Carriel</strong> no es solo un bolso. Tradicionalmente, tiene 12 bolsillos, algunos secretos, y se dice que un auténtico carriel debe llevar 'la plata, la carta de la novia, y el naipe por si hay pelea'.</p>
+        </div>
+        <div class="bg-white p-5 rounded-lg shadow-md" data-aos="fade-right">
+          <p class="text-lg text-gray-800"><strong class="text-col-red">La Bandeja Paisa</strong> no es un plato tan antiguo. Se popularizó a mediados del siglo XX como un plato para arrieros y trabajadores, diseñado para darles energía para todo el día. ¡Por eso es tan grande!</p>
+        </div>
+        <div class="bg-white p-5 rounded-lg shadow-md" data-aos="fade-left">
+          <p class="text-lg text-gray-800"><strong class="text-col-red">Medellín</strong>, la capital de Antioquia, es conocida como la "Ciudad de la Eterna Primavera" por su clima agradable durante todo el año, con temperaturas promedio de 22°C.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="text-center mb-16 p-8 rounded-xl shadow-lg bg-white-transparent" data-aos="zoom-in">
+      <h3 class="text-5xl font-lobster text-col-blue mb-6">¡Vive la FIESTA DE LA ANTIOQUEÑIDAD!</h3>
+      <p class="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
+        Antioquia te espera con su calidez, tradiciones y paisajes únicos. ¡Únete a la celebración de nuestra Antioqueñidad!
+      </p>
+      <a href="https://github.com/grok-user/la-pintada-antioquenidad" class="inline-block bg-col-red text-white py-4 px-12 rounded-full font-bold text-xl hover:bg-red-700 transition-transform transform hover:scale-105">Visita el Repositorio</a>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-col-blue text-white py-8">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-col-yellow">&copy; 2025 FIESTA DE LA ANTIOQUEÑIDAD INEM - Antioquia. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 1200, // values from 0 to 3000, with step 50ms
+      once: true, // whether animation should happen only once - while scrolling down
+      easing: 'ease-in-out-sine',
+    });
+
+    const definitions = {
+      'Parce': 'Amigo, compañero. La forma más común de referirse a alguien cercano.',
+      'Mor': 'Abreviación de "amor". Se usa para referirse a la pareja o a amigos cercanos con cariño.',
+      'Charro': 'Chistoso, gracioso. Algo que causa risa. A veces también puede ser algo ridículo o de mal gusto.',
+      'Camellar': 'Trabajar. Viene de "camello" (trabajo).',
+      'Chimba': '¡De todo un poco! Puede ser algo muy bueno ("¡Qué chimba de página!") o algo muy malo ("¡Qué chimba de trancón!"). El tono lo es todo.',
+      'Pues': 'La muletilla paisa por excelencia. Se usa para todo: para empezar una frase, para terminarla, para enfatizar. "¡Ave María, pues!".'
+    };
+
+    const wordBtns = document.querySelectorAll('.word-btn');
+    const definitionText = document.getElementById('definition-text');
+
+    wordBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update definition
+        const word = btn.textContent;
+        definitionText.textContent = definitions[word];
+
+        // Update styles
+        wordBtns.forEach(otherBtn => {
+          otherBtn.classList.remove('bg-col-yellow', 'text-col-blue');
+          otherBtn.classList.add('bg-white');
+        });
+        btn.classList.add('bg-col-yellow', 'text-col-blue');
+        btn.classList.remove('bg-white');
+      });
+    });
+
+    // Show first definition by default
+    if(document.querySelector('.word-btn')){
+        document.querySelector('.word-btn').click();
+    }
+
+    // Modal Gallery
+    var modal = document.getElementById('myModal');
+    var modalImg = document.getElementById("img01");
+    var captionText = document.getElementById("caption");
+    document.querySelectorAll('.galeria-item').forEach(item => {
+        item.addEventListener('click', function(){
+            modal.style.display = "block";
+            modalImg.src = this.src;
+            captionText.innerHTML = this.dataset.description;
+        });
+    });
+
+    var span = document.getElementsByClassName("close")[0];
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+  </script>
+</body>
+</html>
